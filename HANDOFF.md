@@ -85,7 +85,30 @@
 
 ## Open Questions
 
-*None currently. Add any unresolved questions here during a session.*
+- **CI workflow:** Token lacks `workflow` scope — `.github/workflows/ci.yml` needs to be added via GitHub web UI. Go to github.com/jeffjoslin/agoran → Actions → "set up a workflow yourself" → paste the YAML below:
+```yaml
+name: CI
+on:
+  pull_request:
+    branches: [main, develop]
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npx tsc --noEmit
+```
+- **Vercel:** Connect repo at vercel.com → Import → jeffjoslin/agoran → set env vars from `.env.example` → deploy
 
 ---
 
