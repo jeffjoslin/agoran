@@ -15,7 +15,8 @@ app/build/
 .env.production.local
 
 # Prisma
-app/prisma/migrations/
+# Note: migrations are tracked in version control
+# app/prisma/migrations/
 
 # Debug
 npm-debug.log*
