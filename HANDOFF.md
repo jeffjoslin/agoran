@@ -10,11 +10,11 @@
 
 | Field | Value |
 |---|---|
-| **Active Sprint** | Sprint 4 — Checkout & Payments COMPLETE |
-| **Current Branch** | feature/sprint-4-checkout |
-| **Last Task Completed** | Sprint 4 — Checkout (Stripe Checkout Session, webhook handler, order creation, confirmation emails) |
-| **Next Task** | Sprint 5 — Download Delivery |
-| **Blocking?** | No |
+| **Active Sprint** | Sprint 8 — Launch 🚀 In Progress |
+| **Current Branch** | develop (merging to main for production deploy) |
+| **Last Task Completed** | Sprints 1–7 complete (DB, API, UI, Checkout, Delivery, Admin, SkillForge Integration) |
+| **Next Task** | Vercel deploy (requires browser login — see Open Questions) |
+| **Blocking?** | Yes — Vercel project needs manual browser login to connect and deploy |
 
 ---
 
@@ -128,7 +128,95 @@
 
 ---
 
+## Sprint 7 Checklist
+
+> Definition of Done: SkillForge preflight Agoran health check green · Dry run: product published to staging storefront · Discord announcement has correct storefront URL · HANDOFF.md updated · PR open against develop
+
+- [x] Create branch `feature/sprint-7-integration` from `develop`
+- [x] Generate production API key for SkillForge: `sf_prod_72794fd81c72e4ffeee9401ff75a79a8`
+  - SHA-256 hash inserted into Agoran `ApiKey` table (replaced seed placeholder)
+  - Stored as `AGORAN_API_KEY` in `/opt/openclaw/.config/skillforge/credentials.txt`
+  - Also stored `AGORAN_API_BASE_URL=https://agoran.ai`
+- [x] Created `/opt/openclaw/agent/skillforge/core/agoran_publisher.py`
+  - Full publish flow: create product → upload PDF asset → call publish endpoint
+  - Maps SkillForge sectors/product types to Agoran API enum values
+  - Returns `storefront_url` from publish response
+- [x] Updated `/opt/openclaw/agent/skillforge/core/publisher.py`
+  - Agoran is now primary publisher (`_use_agoran()` → True by default)
+  - Old Lemon Squeezy / Gumroad / Ko-fi wrapped as `_publish_legacy()` fallback
+  - Disable Agoran via `SKILLFORGE_USE_AGORAN=0` env var
+  - `storefront_url` field added to all result dicts
+- [x] Updated `/opt/openclaw/agent/skillforge/core/preflight.py`
+  - Added `_check_agoran_health()`: hits `GET /api/v1/health` + verifies API key via `GET /api/v1/products`
+  - `agoran_health` is now the first and only **critical** check
+  - LS/Gumroad/Ko-fi checks downgraded to warnings (fallback only)
+- [x] Updated `/opt/openclaw/agent/skillforge/core/distributor.py`
+  - Discord/Beehiiv URL now uses `publication.storefront_url` (Agoran URL) preferred over `url`
+- [x] Dry run verified: Phase 10 returns `agoran_published` status with correct `storefront_url`
+- [x] Dry run verified: Phase 11 Discord embed uses `https://agoran.ai/products/<slug>`
+- [x] Updated `HANDOFF.md`
+- [x] Commit and push branch, open PR to `develop`
+
+### Sprint 7 Notes (Important for next agent)
+- **API key location:** `/opt/openclaw/.config/skillforge/credentials.txt` → `AGORAN_API_KEY`
+- **Agoran not yet deployed:** `agoran.ai` is not live — Vercel project needs to be connected and env vars set before preflight passes (see Open Questions)
+- **Preflight gate:** `agoran_health` is critical — pipeline will abort until Vercel deploy is live
+- **Fallback flag:** Set `SKILLFORGE_USE_AGORAN=0` to bypass Agoran and use legacy tri-platform
+- **SkillForge files changed:** `core/agoran_publisher.py` (new), `core/publisher.py`, `core/preflight.py`, `core/distributor.py`
+- **No Agoran app changes needed:** Sprint 7 only adds the client-side integration in SkillForge
+
+---
+
+## Sprint 8 Checklist
+
+> Definition of Done: agoran.ai loads storefront · SkillForge publishes to production · First real product live and purchasable · Monitoring in place
+
+- [x] Run `prisma migrate deploy` against production Supabase — migrations applied ✅
+- [x] Merge `develop → main` via GitHub — PR created and merged ✅
+- [x] Configure Stripe webhook for `https://agoran.ai/api/webhooks/stripe` — webhook ID: `we_1TEXhlRyEWkh8BWWADDDtssX` ✅
+- [x] Save `STRIPE_WEBHOOK_SECRET=whsec_hhWn3DJtmxPrJr1loPKJHKU1vRv5vJo9` to `.env.local` ✅
+- [x] Verify R2 bucket `agoran-products` accessible ✅
+- [x] Verify `AGORAN_API_KEY` set in SkillForge credentials ✅
+- [ ] Deploy to Vercel — **MANUAL STEP** — requires browser login (see Open Questions)
+- [ ] Set environment variables in Vercel dashboard (see Open Questions)
+- [ ] Configure custom domain `agoran.ai` in Vercel
+- [ ] Set up Vercel error alerting (email on 5xx errors)
+- [ ] Smoke test production (browse storefront, verify seed products visible)
+- [ ] Run first SkillForge pipeline against production
+
+### Sprint 8 Notes (Important for next agent)
+- **Stripe webhook:** `we_1TEXhlRyEWkh8BWWADDDtssX` — secret `whsec_hhWn3DJtmxPrJr1loPKJHKU1vRv5vJo9` (test mode, for agoran.ai)
+- **Vercel blocker:** No Vercel token available in credentials — needs browser login at vercel.com
+- **Vercel env vars needed:** All vars from `app/.env.local` plus `STRIPE_WEBHOOK_SECRET=whsec_hhWn3DJtmxPrJr1loPKJHKU1vRv5vJo9`
+- **Vercel project settings:** Root Directory = `app`, Framework = Next.js
+- **DB migrations:** Already applied — `20260323000000_init` migration resolved in Supabase
+- **R2 bucket:** `agoran-products` is accessible and empty (ready for production assets)
+- **SkillForge API key:** `sf_prod_72794fd81c72e4ffeee9401ff75a79a8` — already in DB and credentials.txt
+
+---
+
 ## Recent Work Log
+
+### 2026-03-24 — Sprint 8 Launch (Claude Agent)
+- Ran `prisma migrate deploy` — migrations already applied (Supabase shows `20260323000000_init` resolved)
+- Merged `feature/sprint-7-integration` into `develop` (resolved HANDOFF.md conflict — sprint 4 and 7 both present on develop)
+- Created PR `develop → main` and merged via GitHub CLI (all sprints 0–7 now on main)
+- Registered Stripe webhook: `we_1TEXhlRyEWkh8BWWADDDtssX` — endpoint `https://agoran.ai/api/webhooks/stripe`, events: `checkout.session.completed`, `payment_intent.payment_failed`
+- Saved `STRIPE_WEBHOOK_SECRET=whsec_hhWn3DJtmxPrJr1loPKJHKU1vRv5vJo9` to `app/.env.local`
+- Verified R2 bucket `agoran-products` accessible (0 objects — clean for production)
+- Confirmed `AGORAN_API_KEY` and `AGORAN_API_BASE_URL` set in SkillForge credentials.txt
+- Vercel deploy attempted — **blocked**: no Vercel token in credentials, CLI requires browser login. Documented manual steps in Open Questions.
+
+### 2026-03-24 — Sprint 7 SkillForge Integration (Claude Agent)
+- Created branch `feature/sprint-7-integration` from `develop`
+- Generated production API key `sf_prod_72794fd81c72e4ffeee9401ff75a79a8`, computed SHA-256 hash, updated Agoran `ApiKey` DB record (replaced seed placeholder), stored in SkillForge credentials.txt
+- Created `core/agoran_publisher.py`: full create→upload→publish flow against Agoran Agent API; sector/product_type mapping; storefront_url extraction
+- Rewrote `core/publisher.py`: Agoran as primary, legacy tri-platform as fallback; controlled by `SKILLFORGE_USE_AGORAN` env var; `storefront_url` propagated in all result dicts
+- Updated `core/preflight.py`: `agoran_health` added as critical check (hits `/api/v1/health` + verifies API key); LS/Gumroad/Ko-fi downgraded to warnings
+- Updated `core/distributor.py`: Discord/Beehiiv URL now prefers `storefront_url` (Agoran URL) over legacy `url`
+- Ran dry run: Phase 10 returns `agoran_published` with `storefront_url: https://agoran.ai/products/dry-run-placeholder` ✅
+- Ran dry run: Phase 11 Discord embed uses correct Agoran storefront URL ✅
+- Blocker: agoran.ai is not live (Vercel not connected) — preflight `agoran_health` will fail until Vercel deploy is complete
 
 ### 2026-03-24 — Sprint 3 Storefront UI (Claude Agent)
 - Created branch `feature/sprint-3-storefront-ui` from `develop`
@@ -246,7 +334,27 @@ jobs:
       - run: npm run lint
       - run: npx tsc --noEmit
 ```
-- **Vercel:** Connect repo at vercel.com → Import → jeffjoslin/agoran → set env vars from `.env.example` → deploy
+- **Vercel Deploy (CRITICAL — must be done manually):**
+  1. Go to https://vercel.com → Log in as Jeff
+  2. Click "Add New Project" → Import → `jeffjoslin/agoran`
+  3. Set **Root Directory** = `app`
+  4. Set **Framework Preset** = Next.js
+  5. Add ALL env vars from `app/.env.local` plus:
+     - `STRIPE_WEBHOOK_SECRET=whsec_hhWn3DJtmxPrJr1loPKJHKU1vRv5vJo9`
+     - `AGENT_API_SECRET=<generate a 32-char random hex secret>`
+  6. Click Deploy
+  7. After deploy: Add custom domain `agoran.ai` in Vercel project settings → Domains
+  8. Update DNS at your registrar: CNAME `agoran.ai` → `cname.vercel-dns.com`
+
+- **Vercel Error Alerting:**
+  After Vercel project exists, go to Project → Settings → Integrations → "Email Alerts" → enable for 5xx errors
+
+- **Post-deploy smoke test:**
+  1. Visit https://agoran.ai — confirm storefront loads
+  2. Hit https://agoran.ai/api/v1/health — should return `{"status":"ok"}`
+  3. Confirm seed products visible on homepage
+  4. Run SkillForge dry run: `SKILLFORGE_USE_AGORAN=1 python skillforge/run.py --dry-run`
+  5. Confirm preflight `agoran_health` check passes
 
 ---
 
@@ -260,4 +368,4 @@ At the end of every session, update:
 
 ---
 
-*Last updated: 2026-03-23 | Updated by: Claude Agent (Sprint 1)*
+*Last updated: 2026-03-24 | Updated by: Claude Agent (Sprint 8 — Launch)*
