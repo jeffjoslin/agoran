@@ -1,13 +1,202 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
+// prisma/schema.prisma
+// Agoran — Full Database Schema
+// Sprint 1: Initial schema with all models
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+// ─── PRODUCTS ────────────────────────────────────────────
+
+model Product {
+  id               String        @id @default(cuid())
+  slug             String        @unique
+  title            String
+  description      String
+  shortDescription String?
+
+  // Taxonomy
+  sector           String
+  subNiche         String?
+  productType      ProductType
+  targetAudience   String[]
+  tags             String[]
+
+  // Pricing
+  priceCents       Int
+  currency         String        @default("usd")
+
+  // Status
+  status           ProductStatus @default(DRAFT)
+  publishedAt      DateTime?
+
+  // Stripe
+  stripeProductId  String?
+  stripePriceId    String?
+
+  // Generated landing page content
+  heroHeadline      String?
+  heroSubheadline   String?
+  bulletPoints      String[]
+  audienceStatement String?
+
+  // SEO
+  metaTitle        String?
+  metaDescription  String?
+  ogImageUrl       String?
+
+  // Agent attribution
+  agentId          String?
+  runMetadata      Json?
+
+  // Relations
+  assets           ProductAsset[]
+  orders           Order[]
+  pageViews        PageView[]
+
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  @@index([sector, status])
+  @@index([status, publishedAt])
+  @@index([agentId])
+  @@index([slug])
+}
+
+enum ProductStatus {
+  DRAFT
+  LIVE
+  UNPUBLISHED
+  ARCHIVED
+}
+
+enum ProductType {
+  PDF_GUIDE
+  CHECKLIST
+  TEMPLATE
+  SWIPE_FILE
+  MINI_COURSE
+  TOOLKIT
+}
+
+// ─── ASSETS ──────────────────────────────────────────────
+
+model ProductAsset {
+  id          String    @id @default(cuid())
+  productId   String
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  assetType   AssetType @default(MAIN)
+  filename    String
+  r2Key       String
+  sizeBytes   Int
+  mimeType    String
+
+  createdAt   DateTime  @default(now())
+
+  @@index([productId])
+}
+
+enum AssetType {
+  MAIN
+  BONUS
+  PREVIEW
+}
+
+// ─── API KEYS ─────────────────────────────────────────────
+
+model ApiKey {
+  id          String    @id @default(cuid())
+  name        String
+  keyHash     String    @unique
+  keyPrefix   String
+  agentId     String?
+
+  isActive    Boolean   @default(true)
+  lastUsedAt  DateTime?
+
+  createdAt   DateTime  @default(now())
+
+  @@index([keyHash])
+}
+
+// ─── ORDERS ───────────────────────────────────────────────
+
+model Order {
+  id                String      @id @default(cuid())
+  productId         String
+  product           Product     @relation(fields: [productId], references: [id])
+
+  buyerEmail        String
+  buyerName         String?
+
+  stripeSessionId   String      @unique
+  stripePaymentId   String?
+  amountPaidCents   Int
+  currency          String      @default("usd")
+
+  downloadToken     String      @unique @default(cuid())
+  downloadExpiresAt DateTime
+  downloadCount     Int         @default(0)
+
+  status            OrderStatus @default(PENDING)
+  completedAt       DateTime?
+
+  createdAt         DateTime    @default(now())
+
+  @@index([buyerEmail])
+  @@index([stripeSessionId])
+  @@index([downloadToken])
+  @@index([productId])
+}
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  REFUNDED
+  FAILED
+}
+
+// ─── ANALYTICS ────────────────────────────────────────────
+
+model PageView {
+  id          String    @id @default(cuid())
+  productId   String
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  sessionId   String?
+  referrer    String?
+  userAgent   String?
+
+  createdAt   DateTime  @default(now())
+
+  @@index([productId, createdAt])
+}
+
+// ─── PIPELINE RUNS ────────────────────────────────────────
+
+model PipelineRun {
+  id               String    @id @default(cuid())
+  runId            String    @unique
+  agentId          String?
+
+  productsCreated  Int       @default(0)
+  productsPublished Int      @default(0)
+  totalCostCents   Int?
+
+  startedAt        DateTime
+  completedAt      DateTime?
+  status           String
+
+  metadata         Json?
+
+  createdAt        DateTime  @default(now())
+
+  @@index([runId])
+  @@index([createdAt])
 }
