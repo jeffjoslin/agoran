@@ -34,7 +34,6 @@ function createPrismaClient() {
 
 // Global singleton to prevent multiple instances during Next.js hot reloads in dev
 declare global {
-  // eslint-disable-next-line no-var
   var __prisma: PrismaClient | undefined;
 }
 

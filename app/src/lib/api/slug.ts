@@ -15,7 +15,6 @@ export async function generateUniqueSlug(title: string): Promise<string> {
   let slug = base
   let counter = 2
 
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     const existing = await db.product.findUnique({ where: { slug } })
     if (!existing) return slug

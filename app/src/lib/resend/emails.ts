@@ -1,5 +1,6 @@
 import { Resend } from 'resend'
 import { OrderConfirmation } from '@/emails/OrderConfirmation'
+import { WelcomeBuyer } from '@/emails/WelcomeBuyer'
 import { createElement } from 'react'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
@@ -36,5 +37,21 @@ export async function sendOrderConfirmationEmail(params: SendOrderConfirmationEm
   } catch (err) {
     // Log but don't throw — order is already created
     console.error('[resend] Failed to send confirmation email:', err)
+  }
+
+  // Send separate welcome email on first purchase
+  if (isFirstPurchase) {
+    try {
+      await resend.emails.send({
+        from: FROM_EMAIL,
+        to,
+        subject: 'Welcome to Agoran!',
+        react: createElement(WelcomeBuyer, { buyerEmail: to }),
+      })
+      console.log('[resend] Welcome email sent to:', to)
+    } catch (err) {
+      // Log but don't throw — confirmation email already sent
+      console.error('[resend] Failed to send welcome email:', err)
+    }
   }
 }

@@ -10,10 +10,10 @@
 
 | Field | Value |
 |---|---|
-| **Active Sprint** | Sprint 4 — Checkout & Payments COMPLETE |
-| **Current Branch** | feature/sprint-4-checkout |
-| **Last Task Completed** | Sprint 4 — Checkout (Stripe Checkout Session, webhook handler, order creation, confirmation emails) |
-| **Next Task** | Sprint 5 — Download Delivery |
+| **Active Sprint** | Sprint 5 — File Delivery COMPLETE |
+| **Current Branch** | feature/sprint-5-delivery |
+| **Last Task Completed** | Sprint 5 — Download page, download count limit, WelcomeBuyer email |
+| **Next Task** | Sprint 6 — Admin Dashboard |
 | **Blocking?** | No |
 
 ---
@@ -128,7 +128,44 @@
 
 ---
 
+## Sprint 5 Checklist
+
+> Definition of Done: Download link from email works · File served via R2 signed URL · Expired/invalid tokens handled gracefully · Download count tracked, max 5 enforced · TypeScript zero errors · lint clean · PR open to develop
+
+- [x] Create branch `feature/sprint-5-delivery` from `feature/sprint-4-checkout` (Sprint 4 not yet merged to develop)
+- [x] `src/app/(storefront)/download/[token]/page.tsx` — Download page: validates token, checks expiry + count, increments count, redirects to R2 signed URL (15 min)
+- [x] Download count limit: max 5 (configurable via `DOWNLOAD_MAX_COUNT` env var)
+- [x] Expired token: shows user-friendly error page with support contact
+- [x] Limit reached: shows user-friendly error page with support contact
+- [x] Invalid/not found token: 404
+- [x] `WelcomeBuyer` email template built (Sprint 4); wired in `src/lib/resend/emails.ts` to send alongside order confirmation on first purchase
+- [x] `.env.example` updated with `DOWNLOAD_MAX_COUNT`
+- [x] `eslint.config.mjs` updated to ignore `src/generated/**` (Prisma generated files)
+- [x] TypeScript zero errors (`npm run type-check`)
+- [x] `npm run lint` — zero errors, zero warnings
+- [x] HANDOFF.md updated
+- [x] Push branch and open PR to `develop`
+
+### Sprint 5 Notes (Important for next agent)
+- **Download page:** server component at `(storefront)/download/[token]/page.tsx` — validates Order by `downloadToken`, checks status=COMPLETED, expiry, and count limit before redirecting to R2 signed URL
+- **Signed URL expiry:** 900 seconds (15 minutes) — generated fresh on each valid download request
+- **Download count limit:** controlled by `DOWNLOAD_MAX_COUNT` env var (default 5); increment happens before redirect
+- **WelcomeBuyer email:** sent as separate email (alongside OrderConfirmation) when `isFirstPurchase === true` in `sendOrderConfirmationEmail()`
+- **Sprint 4 email templates** (`src/emails/`): use inline HTML (not `@react-email/components`) — different from `emails/` directory which has older versions
+- **ESLint:** `src/generated/**` added to ignore list — Prisma generated files contain `require()` calls that would otherwise fail the `@typescript-eslint/no-require-imports` rule
+
+---
+
 ## Recent Work Log
+
+### 2026-03-24 — Sprint 5 File Delivery (Claude Agent)
+- Created branch `feature/sprint-5-delivery` from `feature/sprint-4-checkout` (Sprint 4 not merged to develop yet)
+- Built download page `(storefront)/download/[token]/page.tsx`: looks up Order by `downloadToken`, validates status=COMPLETED + not expired + count < MAX, increments `downloadCount`, generates 15-min R2 signed URL, redirects buyer directly to R2
+- Expired token shows user-friendly error page; download limit reached shows separate error page; invalid token returns 404
+- `DOWNLOAD_MAX_COUNT` env var (default 5) controls max downloads per token
+- Wired `WelcomeBuyer` email (built in Sprint 4) into `sendOrderConfirmationEmail()` — sent as separate Resend email alongside OrderConfirmation on first purchase
+- Fixed ESLint: added `src/generated/**` to ignore list (Prisma generated files); fixed `react/no-unescaped-entities` in Sprint 4 email templates; removed stale `eslint-disable` comments
+- TypeScript zero errors; lint zero errors/warnings
 
 ### 2026-03-24 — Sprint 3 Storefront UI (Claude Agent)
 - Created branch `feature/sprint-3-storefront-ui` from `develop`
