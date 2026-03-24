@@ -10,10 +10,10 @@
 
 | Field | Value |
 |---|---|
-| **Active Sprint** | Sprint 2 — Agent API |
-| **Current Branch** | feature/sprint-1-database (PR open to develop) |
-| **Last Task Completed** | Sprint 1 — Database schema, migrations, seed data, Prisma client singleton |
-| **Next Task** | Sprint 2 — Agent Publishing API (feature/sprint-2-agent-api) |
+| **Active Sprint** | Sprint 3 — Storefront UI |
+| **Current Branch** | feature/sprint-2-agent-api (PR open to develop) |
+| **Last Task Completed** | Sprint 2 — Agent Publishing API (all endpoints implemented, TypeScript clean) |
+| **Next Task** | Sprint 3 — Storefront UI (feature/sprint-3-storefront) |
 | **Blocking?** | No |
 
 ---
@@ -62,7 +62,61 @@
 
 ---
 
+## Sprint 2 Checklist
+
+> Definition of Done: All Agent API endpoints implemented · TypeScript zero errors · curl test script passes · PR open to develop
+
+- [x] Create branch `feature/sprint-2-agent-api` from `develop`
+- [x] Install dependencies: `@aws-sdk/client-s3`, `@aws-sdk/s3-request-presigner`, `stripe`, `@anthropic-ai/sdk`, `bcryptjs`
+- [x] `src/lib/api/auth.ts` — API key auth middleware (SHA-256 hash lookup against ApiKey table)
+- [x] `src/lib/api/errors.ts` — Typed error response utilities
+- [x] `src/lib/api/slug.ts` — Slug generation with collision handling (-2, -3 suffix)
+- [x] `src/app/api/v1/health/route.ts` — Health check endpoint (no auth)
+- [x] `src/app/api/v1/products/route.ts` — POST (create) and GET (list with filters)
+- [x] `src/app/api/v1/products/[id]/route.ts` — GET (single) and PUT (update)
+- [x] `src/app/api/v1/products/[id]/assets/route.ts` — Multipart upload to R2, magic byte validation
+- [x] `src/lib/r2/client.ts` — Cloudflare R2 client (upload + signed download URLs)
+- [x] `src/lib/llm/landing-page.ts` — Anthropic landing page content generation
+- [x] `src/lib/stripe/client.ts` — Stripe client with production guard
+- [x] `src/app/api/v1/products/[id]/publish/route.ts` — LLM→Stripe→DB publish flow (F-008)
+- [x] `src/app/api/v1/products/[id]/analytics/route.ts` — PageView + Order analytics
+- [x] `scripts/test-api.sh` — curl end-to-end test script
+- [x] Fixed pre-existing `prisma.config.ts` TypeScript error (`directUrl` not in Datasource type)
+- [x] `npx tsc --noEmit` — zero errors
+- [x] Push branch and open PR to `develop`
+
+### Sprint 2 Notes (Important for next agent)
+- **ApiKey model** (not AgentKey): `db.apiKey.findFirst({ where: { keyHash, isActive: true } })`
+- **ProductAsset**: uses `sizeBytes` (not `fileSizeBytes`), `assetType` enum: MAIN/BONUS/PREVIEW
+- **Product.sector**: plain `String` (not enum) — any string value accepted
+- **Product.targetAudience**: `String[]` — must pass array, not single string
+- **ProductType enum**: PDF_GUIDE, CHECKLIST, TEMPLATE, SWIPE_FILE, MINI_COURSE, TOOLKIT (not COURSE)
+- **Stripe API version**: `2026-02-25.clover` (pinned to installed stripe package version)
+- **Analytics**: uses `PageView` model (count) + `Order` model (completed orders sum)
+- **maxDuration = 30**: set on publish route for Vercel (LLM call can take up to 30s)
+
+---
+
 ## Recent Work Log
+
+### 2026-03-23 — Sprint 2 Agent API (Claude Agent)
+- Created branch `feature/sprint-2-agent-api` from `develop`
+- Installed npm packages: `@aws-sdk/client-s3`, `@aws-sdk/s3-request-presigner`, `stripe`, `@anthropic-ai/sdk`, `bcryptjs`, `@types/bcryptjs`
+- Created `src/lib/api/auth.ts`: SHA-256 hash lookup against ApiKey table, updates `lastUsedAt` on each authenticated request
+- Created `src/lib/api/errors.ts`: typed error codes and response helpers
+- Created `src/lib/api/slug.ts`: slug generation with collision handling (appends -2, -3, etc.)
+- Created `src/app/api/v1/health/route.ts`: health check (no auth required)
+- Created `src/app/api/v1/products/route.ts`: POST (create with slug, validates ProductType enum) and GET (list with sector/status/agent_id filters)
+- Created `src/app/api/v1/products/[id]/route.ts`: GET (with assets included) and PUT (partial update, guards LIVE products)
+- Created `src/lib/r2/client.ts`: Cloudflare R2 client using AWS SDK v3, stores r2Key not signed URL (F-005)
+- Created `src/app/api/v1/products/[id]/assets/route.ts`: multipart upload, validates size (100MB), extension, and magic bytes (F-007)
+- Created `src/lib/llm/landing-page.ts`: Anthropic claude-haiku with 30s timeout, generates JSON landing page content
+- Created `src/lib/stripe/client.ts`: Stripe client pinned to `2026-02-25.clover` with production key guard
+- Created `src/app/api/v1/products/[id]/publish/route.ts`: LLM→Stripe→DB ordering (F-008), idempotent Stripe create, maxDuration=30
+- Created `src/app/api/v1/products/[id]/analytics/route.ts`: PageView count + completed Order sum
+- Created `scripts/test-api.sh`: curl end-to-end test script
+- Fixed pre-existing `prisma.config.ts` TypeScript error: `directUrl` not a valid property in `Datasource` type
+- All TypeScript checks pass: `npx tsc --noEmit` — zero errors
 
 ### 2026-03-23 — Sprint 1 Database (Claude Agent)
 - Created branch `feature/sprint-1-database` from `develop`
