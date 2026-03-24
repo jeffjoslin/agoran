@@ -10,10 +10,10 @@
 
 | Field | Value |
 |---|---|
-| **Active Sprint** | Sprint 3 — Storefront UI ✅ Complete |
-| **Current Branch** | feature/sprint-3-storefront-ui (PR open to develop) |
-| **Last Task Completed** | Sprint 3 — Storefront UI (all pages, components, sitemap, pageview tracking) |
-| **Next Task** | Sprint 4 — Checkout (Stripe Checkout Session, webhook handler, download flow) |
+| **Active Sprint** | Sprint 4 — Checkout & Payments COMPLETE |
+| **Current Branch** | feature/sprint-4-checkout |
+| **Last Task Completed** | Sprint 4 — Checkout (Stripe Checkout Session, webhook handler, order creation, confirmation emails) |
+| **Next Task** | Sprint 5 — Download Delivery |
 | **Blocking?** | No |
 
 ---
