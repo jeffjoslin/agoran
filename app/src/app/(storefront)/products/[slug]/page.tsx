@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { db } from '@/lib/db';
+import { createCheckoutSession } from '@/app/actions/checkout';
 import { ProductCard } from '@/components/storefront/ProductCard';
 import { PageViewTracker } from '@/components/storefront/PageViewTracker';
 import {
@@ -15,7 +16,6 @@ import {
   GLASS_BODY_SMALL,
   GLASS_BADGE_ACCENT,
   GLASS_BADGE_LIVE,
-  GLASS_BUTTON_PRIMARY,
   GLASS_PRICE,
   GLASS_DIVIDER,
   GLASS_ALERT_SUCCESS,
@@ -207,17 +207,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
                     <span className={GLASS_PRICE}>{formatPrice(product.priceCents)}</span>
                   </div>
 
-                  <button
-                    disabled
-                    className={`${GLASS_BUTTON_PRIMARY} w-full opacity-60 cursor-not-allowed`}
-                    title="Checkout coming soon"
-                  >
-                    Buy Now
-                  </button>
-
-                  <p className={`${GLASS_BODY_SMALL} text-center mt-3`}>
-                    Checkout available soon
-                  </p>
+                  <form action={createCheckoutSession.bind(null, product.id)}>
+                    <button
+                      type="submit"
+                      className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+                    >
+                      Buy Now — ${(product.priceCents / 100).toFixed(2)}
+                    </button>
+                  </form>
                 </div>
               </div>
             </div>
