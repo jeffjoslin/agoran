@@ -10,10 +10,10 @@
 
 | Field | Value |
 |---|---|
-| **Active Sprint** | Sprint 3 — Storefront UI |
-| **Current Branch** | feature/sprint-2-agent-api (PR open to develop) |
-| **Last Task Completed** | Sprint 2 — Agent Publishing API (all endpoints implemented, TypeScript clean) |
-| **Next Task** | Sprint 3 — Storefront UI (feature/sprint-3-storefront) |
+| **Active Sprint** | Sprint 3 — Storefront UI ✅ Complete |
+| **Current Branch** | feature/sprint-3-storefront-ui (PR open to develop) |
+| **Last Task Completed** | Sprint 3 — Storefront UI (all pages, components, sitemap, pageview tracking) |
+| **Next Task** | Sprint 4 — Checkout (Stripe Checkout Session, webhook handler, download flow) |
 | **Blocking?** | No |
 
 ---
@@ -97,7 +97,50 @@
 
 ---
 
+## Sprint 3 Checklist
+
+> Definition of Done: Homepage shows seed products · Sector pages filter correctly · Product page renders all generated content · Correct meta tags · Mobile layout clean · Sitemap.xml valid · TypeScript zero errors · PR open to develop
+
+- [x] Create branch `feature/sprint-3-storefront-ui` from `develop`
+- [x] `src/app/(storefront)/layout.tsx` — Storefront layout with glass navbar
+- [x] `src/components/storefront/ProductCard.tsx` — sector badge, title, description, price, view button
+- [x] `src/components/storefront/ProductGrid.tsx` — responsive 1→2→3 column grid
+- [x] `src/components/storefront/SectorNav.tsx` — sector links with icons
+- [x] `src/components/storefront/ProductFilters.tsx` — client filter sidebar (sector, type, price, keyword)
+- [x] `src/components/storefront/PageViewTracker.tsx` — client component fires trackPageView on mount
+- [x] `src/app/(storefront)/page.tsx` — Homepage: hero + sector nav + featured 6 LIVE products (ISR 3600)
+- [x] `src/app/(storefront)/[sector]/page.tsx` — Sector pages filtered by sector, redirect unknown → home (ISR 3600)
+- [x] `src/app/(storefront)/products/page.tsx` — All products with filter sidebar + keyword ILIKE search (SSR)
+- [x] `src/app/(storefront)/products/[slug]/page.tsx` — Full landing page: hero, bullets, audience, buy button, related, SEO meta (ISR 300)
+- [x] `src/app/actions/pageview.ts` — Non-blocking server action creates PageView record
+- [x] `src/app/sitemap.ts` — Dynamic sitemap from all LIVE products
+- [x] TypeScript zero errors (`tsc --noEmit`)
+- [x] Push branch and open PR to `develop`
+
+### Sprint 3 Notes (Important for next agent)
+- **Route groups:** `(storefront)` layout wraps all public pages. Root `page.tsx` was deleted; storefront handles `/`
+- **Price field:** `priceCents` (Int) — divide by 100 to display as dollars
+- **ProductStatus:** `LIVE` is the active status. `DRAFT`, `UNPUBLISHED`, `ARCHIVED` are not shown on storefront
+- **Sector filter:** case-insensitive `mode: 'insensitive'` used in all Prisma queries
+- **PageView tracking:** non-blocking — `PageViewTracker` client component fires server action on mount, errors swallowed
+- **ISR:** Homepage + sector pages revalidate every 3600s; product pages every 300s. `revalidatePath` on publish (Sprint 2) handles immediate invalidation
+- **Buy Now button:** disabled placeholder — Sprint 4 wires up Stripe Checkout
+
+---
+
 ## Recent Work Log
+
+### 2026-03-24 — Sprint 3 Storefront UI (Claude Agent)
+- Created branch `feature/sprint-3-storefront-ui` from `develop`
+- Removed placeholder root `page.tsx`; added `(storefront)` route group with glass navbar layout
+- Built `ProductCard`, `ProductGrid`, `SectorNav`, `ProductFilters`, `PageViewTracker` components (all using design tokens, zero inline glass classes)
+- Homepage: hero tagline, sector nav (dynamic from DB), featured 6 LIVE products grid (ISR 3600)
+- Sector pages: dynamic `[sector]/page.tsx`, unknown sectors redirect → homepage (ISR 3600)
+- Products listing: SSR with `?q=`, `?sector=`, `?type=`, `?minPrice=`, `?maxPrice=` filters via Prisma ILIKE
+- Product landing page: heroHeadline, heroSubheadline, bulletPoints, audienceStatement, SEO meta (og:image, twitter card), related products, Buy Now (disabled), `generateStaticParams` (ISR 300)
+- Non-blocking pageview tracking: server action + client `PageViewTracker` component
+- `sitemap.ts`: all LIVE product URLs + homepage + /products
+- TypeScript zero errors
 
 ### 2026-03-23 — Sprint 2 Agent API (Claude Agent)
 - Created branch `feature/sprint-2-agent-api` from `develop`
