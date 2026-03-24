@@ -10,10 +10,10 @@
 
 | Field | Value |
 |---|---|
-| **Active Sprint** | Sprint 3 — Storefront UI ✅ Complete |
-| **Current Branch** | feature/sprint-3-storefront-ui (PR open to develop) |
-| **Last Task Completed** | Sprint 3 — Storefront UI (all pages, components, sitemap, pageview tracking) |
-| **Next Task** | Sprint 4 — Checkout (Stripe Checkout Session, webhook handler, download flow) |
+| **Active Sprint** | Sprint 6 — Admin Dashboard ✅ Complete |
+| **Current Branch** | feature/sprint-6-admin (PR open to develop) |
+| **Last Task Completed** | Sprint 6 — Admin Dashboard (auth, overview, products, analytics, pipeline) |
+| **Next Task** | Sprint 7 — SkillForge Integration |
 | **Blocking?** | No |
 
 ---
@@ -128,7 +128,57 @@
 
 ---
 
+## Sprint 6 Checklist
+
+> Definition of Done: Jeff can log in at `/admin/login` · All admin pages render with real DB data · All routes protected · TypeScript zero errors · `npm run lint` passes · PR open to develop
+
+- [x] Create branch `feature/sprint-6-admin` from `develop`
+- [x] Install `@supabase/supabase-js` and `@supabase/ssr`
+- [x] `src/lib/supabase/client.ts` — Browser Supabase client (for login form)
+- [x] `src/lib/supabase/server.ts` — Server Supabase client (for server components/layouts)
+- [x] `src/middleware.ts` — Protect all `/admin/*` routes; redirect unauthenticated → `/admin/login`; uses `getUser()` not `getSession()` (F-011)
+- [x] `src/app/admin/login/page.tsx` — Email + password sign-in form (Client Component)
+- [x] `src/app/admin/login/layout.tsx` — Minimal centered layout (no sidebar)
+- [x] `src/app/(admin)/layout.tsx` — Admin sidebar layout with server-side auth check
+- [x] `src/app/(admin)/_components/AdminSidebar.tsx` — Sidebar nav (Overview, Products, Analytics, Pipeline, Sign out)
+- [x] `src/app/(admin)/admin/page.tsx` — Overview: today's revenue/sales, 7-day bar chart, product status counts, last 5 pipeline runs
+- [x] `src/app/(admin)/admin/products/page.tsx` — All products table; sortable by all columns; Publish/Unpublish quick action
+- [x] `src/app/(admin)/admin/products/[id]/page.tsx` — Product edit form; generated content view; asset list; recent sales; archive danger zone
+- [x] `src/app/(admin)/admin/analytics/page.tsx` — Revenue over 30 days (SVG bar chart); top 10 products; top sectors; conversion rate by sector
+- [x] `src/app/(admin)/admin/pipeline/page.tsx` — All pipeline runs; run ID, status, timestamps, products created/published, cost
+- [x] `src/lib/utils.ts` — Added `formatCents()` helper
+- [x] `eslint.config.mjs` — Added `src/generated/**` to ESLint ignores (Prisma generated files)
+- [x] TypeScript zero errors (`npm run type-check` passes)
+- [x] `npm run lint` passes (0 errors)
+- [x] Push branch and open PR to `develop`
+
+### Sprint 6 Notes (Important for next agent)
+- **Admin route structure:** `(admin)` route group wraps `/admin/*` pages (has sidebar layout). `/admin/login` lives at `app/admin/login/` (outside the group, no sidebar)
+- **Auth pattern:** Middleware uses Supabase SSR `getUser()` (network-verified JWT). Layout also checks server-side as defense-in-depth (F-011)
+- **ADMIN_EMAIL guard:** Both middleware and layout check that `user.email === process.env.ADMIN_EMAIL` — only one user allowed
+- **No chart library:** SVG bar charts are built inline — no recharts/chart.js dependency
+- **Server Actions for mutations:** toggleStatus (Publish/Unpublish), updateProduct (edit), archiveProduct (danger zone) all use `'use server'` + `revalidatePath`
+- **formatCents:** Added to `src/lib/utils.ts` — formats cents to `$X.XX` string
+
+---
+
 ## Recent Work Log
+
+### 2026-03-24 — Sprint 6 Admin Dashboard (Claude Agent)
+- Created branch `feature/sprint-6-admin` from `develop`
+- Installed `@supabase/supabase-js@^2.100.0` and `@supabase/ssr@^0.9.0`
+- Created Supabase browser + server clients (`src/lib/supabase/client.ts`, `server.ts`)
+- Created `src/middleware.ts`: protects all `/admin/*` routes (except `/admin/login`), uses `getUser()` per F-011, checks ADMIN_EMAIL restriction
+- Created admin login page at `app/admin/login/` (Client Component with Supabase `signInWithPassword`)
+- Created `(admin)` route group with sidebar layout and AdminSidebar client component (sign-out, nav items, active state)
+- Created Overview page: today stats, 7-day revenue SVG bar chart, product status counts, last 5 pipeline runs
+- Created Products table: all products with sortable columns, Publish/Unpublish quick action via Server Action
+- Created Product detail/edit: form for title/description/price/sector/tags/status, generated content display, asset list, recent sales, archive danger zone
+- Created Analytics page: 30-day revenue SVG chart, top 10 products by revenue, top sectors by sales, conversion rate by sector
+- Created Pipeline runs page: full runs table with status badges, duration, cost
+- Added `formatCents()` to `src/lib/utils.ts`
+- Fixed ESLint: added `src/generated/**` to ignores (Prisma auto-generated files)
+- TypeScript zero errors, lint passes (0 errors, 2 pre-existing warnings in Sprint 0–5 files)
 
 ### 2026-03-24 — Sprint 3 Storefront UI (Claude Agent)
 - Created branch `feature/sprint-3-storefront-ui` from `develop`
