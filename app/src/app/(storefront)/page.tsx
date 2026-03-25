@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { db } from '@/lib/db';
 import { ProductGrid } from '@/components/storefront/ProductGrid';
 import { SectorNav } from '@/components/storefront/SectorNav';
@@ -85,9 +86,9 @@ export default async function HomePage() {
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="/products" className={GLOW_BUTTON_PRIMARY}>
+            <Link href="/products" className={GLOW_BUTTON_PRIMARY}>
               Browse All Products
-            </a>
+            </Link>
             <a href="#sectors" className={GLOW_BUTTON_SECONDARY}>
               Explore Sectors
             </a>

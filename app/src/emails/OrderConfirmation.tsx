@@ -40,7 +40,7 @@ export function OrderConfirmation({
                 <div style={{ backgroundColor: '#eff6ff', borderRadius: '8px', padding: '16px', marginBottom: '24px', borderLeft: '4px solid #3b82f6' }}>
                   <p style={{ margin: 0, color: '#1d4ed8', fontWeight: 600 }}>Welcome to Agoran!</p>
                   <p style={{ margin: '4px 0 0', color: '#3b82f6', fontSize: '14px' }}>
-                    We're thrilled to have you as a new customer.
+                    We&apos;re thrilled to have you as a new customer.
                   </p>
                 </div>
               )}

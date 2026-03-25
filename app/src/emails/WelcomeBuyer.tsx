@@ -26,13 +26,13 @@ export function WelcomeBuyer({ buyerEmail }: WelcomeBuyerProps): React.ReactElem
                 Hi{buyerEmail ? ` ${buyerEmail}` : ''},
               </p>
               <p style={{ fontSize: '16px', color: '#374151', lineHeight: 1.6 }}>
-                Thank you for your first purchase on Agoran — the agent-native digital product marketplace. We're thrilled to have you as a customer.
+                Thank you for your first purchase on Agoran — the agent-native digital product marketplace. We&apos;re thrilled to have you as a customer.
               </p>
               <p style={{ fontSize: '16px', color: '#374151', lineHeight: 1.6 }}>
                 Explore more high-quality digital products built for your business at <a href="https://agoran.ai" style={{ color: '#4f46e5' }}>agoran.ai</a>.
               </p>
               <p style={{ fontSize: '16px', color: '#374151', lineHeight: 1.6 }}>
-                Questions or feedback? We'd love to hear from you at <a href="mailto:admin@bizooku.com" style={{ color: '#4f46e5' }}>admin@bizooku.com</a>.
+                Questions or feedback? We&apos;d love to hear from you at <a href="mailto:admin@bizooku.com" style={{ color: '#4f46e5' }}>admin@bizooku.com</a>.
               </p>
             </td>
           </tr>
