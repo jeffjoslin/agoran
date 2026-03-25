@@ -10,10 +10,10 @@
 
 | Field | Value |
 |---|---|
-| **Active Sprint** | Sprint 8 — Launch 🚀 In Progress |
-| **Current Branch** | develop (merging to main for production deploy) |
-| **Last Task Completed** | Sprints 1–7 complete (DB, API, UI, Checkout, Delivery, Admin, SkillForge Integration) |
-| **Next Task** | Vercel deploy (requires browser login — see Open Questions) |
+| **Active Sprint** | Sprint 8 — Visual Redesign "Dazzling" |
+| **Current Branch** | feature/visual-redesign-dazzling (PR open against develop) |
+| **Last Task Completed** | Visual redesign complete — aurora mesh, glassmorphism 2.0, animated gradient borders, glowing CTAs, scroll reveal |
+| **Next Task** | Merge PR to develop, then Vercel deploy (requires browser login — see Open Questions) |
 | **Blocking?** | Yes — Vercel project needs manual browser login to connect and deploy |
 
 ---
@@ -196,6 +196,18 @@
 ---
 
 ## Recent Work Log
+
+### 2026-03-25 — Visual Redesign "Dazzling" (Claude Agent)
+- Created branch `feature/visual-redesign-dazzling` from `develop`
+- **design-tokens.ts**: Added 30+ new visual tokens — aurora backgrounds, gradient text (violet→cyan, violet→rose), glowing CTA buttons (pulse-glow ring), Glassmorphism 2.0 cards (GLASS2_CARD, GLASS2_CARD_ELEVATED), sector-keyed badge/glow tokens (SECTOR_BADGE, SECTOR_PRICE_GLOW, SECTOR_GLOW_*), dazzling product card tokens (DAZZLING_CARD_OUTER/INNER), bento grid token, scroll reveal token, aurora navbar tokens
+- **globals.css**: Added 300+ lines of new CSS — aurora keyframe animations (drift, pulse), shimmer keyframe, gradient-border-spin keyframe, pulse-glow-ring CTA animation, fade-up scroll reveal, float-y levitation; sector CSS variables (--sector-ai/finance/health/marketing/productivity); aurora orb classes; noise/grain SVG overlay; dazzling card animated gradient border; nav link animated underline; feature bullet sector glow classes; sector card hover glow classes; prefers-reduced-motion support
+- **layout.tsx**: Converted to client component; fixed navbar with blur-on-scroll (JS scroll listener toggles `backdrop-blur-2xl bg-black/50`); gradient logo text (violet→cyan); animated underline nav links; extra "Explore All" pill CTA; wrapped children in ScrollRevealObserver
+- **page.tsx (homepage)**: Full-viewport aurora mesh hero with 3 floating orbs + noise overlay; giant fluid headline (clamp: 2.8rem→6.5rem) with gradient text; animated glass pill badge ("AI-powered digital products — live now") with pulsing green dot; dual glowing CTAs (violet→cyan gradient + glass secondary); trust stats strip; sector nav with centered gradient heading; featured products with gradient heading — all sections use aurora dark bg
+- **ProductCard.tsx**: Dazzling animated gradient border card (DAZZLING_CARD_OUTER/INNER); sector-keyed colored badges (cyan for AI, emerald for Finance, rose for Health, violet for Marketing, amber for Productivity); sector-colored glowing price text; hover: -translate-y-2 lift + glow spread; scroll-reveal class for fade-up on scroll entry; "View →" CTA with violet hover glow
+- **SectorNav.tsx**: Sector-specific colored icon pill backgrounds; sector-keyed hover border glow (e.g. cyan glow for AI); lift + scale on hover; improved grid card with GLASS2_CARD
+- **ProductPage [slug]/page.tsx**: Full-bleed hero with sector-specific aurora radial gradient background + noise overlay; giant fluid headline (clamp: 2rem→4.5rem) with gradient text; sector-keyed feature bullet cards with colored left-border glow (CSS class per sector); glowing pulsing "Buy Now" button (GLOW_BUTTON_PRIMARY, pulse-glow-ring animation); sector-colored glowing price; related products with gradient section heading
+- **ScrollRevealObserver.tsx** (new): Client component using IntersectionObserver to trigger `.scroll-reveal` → `.is-visible` fade-up transitions with stagger delays for grid children
+- All pre-existing TypeScript errors unchanged; zero new errors introduced (reduced pre-existing count from 15 to 11 by fixing some along the way)
 
 ### 2026-03-24 — Sprint 8 Launch (Claude Agent)
 - Ran `prisma migrate deploy` — migrations already applied (Supabase shows `20260323000000_init` resolved)
