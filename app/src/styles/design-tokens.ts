@@ -282,6 +282,145 @@ export const GLASS_CAPTION = 'text-white/35 text-xs';
 export const GLASS_PRICE = 'text-2xl font-bold text-white';
 
 // ---------------------------------------------------------------------------
+// AURORA / DAZZLING REDESIGN TOKENS (Sprint 9 — Visual Redesign)
+// Added 2026-03-25
+// ---------------------------------------------------------------------------
+
+// --- Page Background ---
+/** Aurora dark page background — replaces GLASS_PAGE_BG for dazzling look */
+export const AURORA_PAGE_BG = 'min-h-screen bg-[#050810] relative overflow-x-hidden';
+
+// --- Gradient Text ---
+/** Gradient text — violet→cyan, for hero headings and logo */
+export const GRADIENT_TEXT =
+  'bg-gradient-to-r from-violet-400 via-cyan-400 to-cyan-300 bg-clip-text text-transparent';
+
+/** Gradient text — violet→rose, for secondary accents */
+export const GRADIENT_TEXT_ALT =
+  'bg-gradient-to-r from-violet-400 via-rose-400 to-pink-300 bg-clip-text text-transparent';
+
+// --- Glowing CTA Buttons ---
+/** Glowing primary CTA — pulsing violet→cyan gradient with glow ring */
+export const GLOW_BUTTON_PRIMARY =
+  'relative inline-flex items-center justify-center px-8 py-4 font-semibold text-white rounded-2xl ' +
+  'bg-gradient-to-r from-violet-600 to-cyan-500 ' +
+  'shadow-[0_0_24px_rgba(124,58,237,0.5),0_0_48px_rgba(6,182,212,0.25)] ' +
+  'hover:shadow-[0_0_32px_rgba(124,58,237,0.7),0_0_64px_rgba(6,182,212,0.4)] ' +
+  'hover:scale-105 active:scale-100 ' +
+  'transition-all duration-300 ease-out ' +
+  'cursor-pointer select-none pulse-glow';
+
+/** Glowing secondary CTA */
+export const GLOW_BUTTON_SECONDARY =
+  'relative inline-flex items-center justify-center px-6 py-3 font-medium text-white rounded-xl ' +
+  'bg-white/8 border border-white/20 backdrop-blur-md ' +
+  'hover:bg-white/14 hover:border-violet-400/40 ' +
+  'hover:shadow-[0_0_16px_rgba(124,58,237,0.3)] ' +
+  'transition-all duration-200 ease-out ' +
+  'cursor-pointer select-none';
+
+// --- Aurora Backgrounds (used as inline style objects or CSS classes) ---
+/** Aurora mesh background container — add aurora-bg class */
+export const AURORA_HERO_BG = 'relative aurora-hero';
+
+// --- Glassmorphism 2.0 ---
+/** Deep frosted glass card — Glassmorphism 2.0 with inner glow */
+export const GLASS2_CARD =
+  'backdrop-blur-2xl bg-white/6 border border-white/12 rounded-2xl ' +
+  'shadow-[0_4px_24px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.10),inset_0_0_0_1px_rgba(255,255,255,0.04)]';
+
+/** Elevated glass 2.0 — on hover */
+export const GLASS2_CARD_ELEVATED =
+  'backdrop-blur-2xl bg-white/10 border border-white/20 rounded-2xl ' +
+  'shadow-[0_8px_40px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.15),inset_0_0_0_1px_rgba(255,255,255,0.06)]';
+
+/** Glass pill — for badges, nav pills */
+export const GLASS2_PILL =
+  'backdrop-blur-md bg-white/8 border border-white/15 rounded-full ' +
+  'px-4 py-1.5 text-sm text-white/80';
+
+/** Glass hero badge */
+export const GLASS2_HERO_BADGE =
+  'inline-flex items-center gap-2 backdrop-blur-md bg-white/8 border border-white/15 rounded-full ' +
+  'px-4 py-2 text-sm text-white/70 font-medium';
+
+// --- Navbar ---
+/** Aurora sticky navbar — blur intensifies on scroll via JS class toggle */
+export const AURORA_NAVBAR =
+  'fixed top-0 left-0 right-0 z-50 transition-all duration-300 ' +
+  'border-b border-white/0';
+
+/** Navbar scrolled state — applied via JS */
+export const AURORA_NAVBAR_SCROLLED =
+  'backdrop-blur-2xl bg-black/40 border-b border-white/8 ' +
+  'shadow-[0_4px_24px_rgba(0,0,0,0.3)]';
+
+// --- Sector Color Tokens ---
+/** Sector glow shadow: AI (cyan) */
+export const SECTOR_GLOW_AI = 'shadow-[0_0_24px_rgba(6,182,212,0.4)]';
+/** Sector glow shadow: Finance (emerald) */
+export const SECTOR_GLOW_FINANCE = 'shadow-[0_0_24px_rgba(16,185,129,0.4)]';
+/** Sector glow shadow: Health (rose) */
+export const SECTOR_GLOW_HEALTH = 'shadow-[0_0_24px_rgba(244,63,94,0.4)]';
+/** Sector glow shadow: Marketing (violet) */
+export const SECTOR_GLOW_MARKETING = 'shadow-[0_0_24px_rgba(124,58,237,0.4)]';
+/** Sector glow shadow: Productivity (amber) */
+export const SECTOR_GLOW_PRODUCTIVITY = 'shadow-[0_0_24px_rgba(245,158,11,0.4)]';
+
+// --- Animated Border ---
+/** Animated gradient border wrapper — apply to parent, use gradient-border class */
+export const ANIMATED_BORDER_WRAP = 'gradient-border-wrap';
+
+// --- Noise Overlay ---
+/** Grain noise texture overlay */
+export const NOISE_OVERLAY = 'noise-overlay';
+
+// --- Typography Upgrades ---
+/** Fluid hero heading — clamp-based, giant */
+export const AURORA_HEADING_HERO =
+  'font-bold tracking-tight leading-[1.05] text-white';
+
+// --- Product Card — Dazzling Version ---
+/** Product card with animated gradient border — outer wrapper */
+export const DAZZLING_CARD_OUTER = 'dazzling-card-outer group block h-full';
+
+/** Product card inner surface */
+export const DAZZLING_CARD_INNER =
+  'dazzling-card-inner h-full rounded-2xl p-6 flex flex-col gap-4 ' +
+  'backdrop-blur-2xl bg-white/5 border border-white/10 ' +
+  'transition-all duration-300 ease-out ' +
+  'group-hover:bg-white/9 group-hover:border-white/18 ' +
+  'group-hover:-translate-y-2 ' +
+  'group-hover:shadow-[0_16px_48px_rgba(0,0,0,0.5)]';
+
+// --- Sector Badge Tokens (sector-colored) ---
+export const SECTOR_BADGE: Record<string, string> = {
+  ai: 'bg-cyan-500/15 border-cyan-400/30 text-cyan-300',
+  finance: 'bg-emerald-500/15 border-emerald-400/30 text-emerald-300',
+  health: 'bg-rose-500/15 border-rose-400/30 text-rose-300',
+  marketing: 'bg-violet-500/15 border-violet-400/30 text-violet-300',
+  productivity: 'bg-amber-500/15 border-amber-400/30 text-amber-300',
+  default: 'bg-violet-500/12 border-violet-400/20 text-violet-300',
+};
+
+export const SECTOR_PRICE_GLOW: Record<string, string> = {
+  ai: 'text-cyan-300 drop-shadow-[0_0_8px_rgba(6,182,212,0.6)]',
+  finance: 'text-emerald-300 drop-shadow-[0_0_8px_rgba(16,185,129,0.6)]',
+  health: 'text-rose-300 drop-shadow-[0_0_8px_rgba(244,63,94,0.6)]',
+  marketing: 'text-violet-300 drop-shadow-[0_0_8px_rgba(124,58,237,0.6)]',
+  productivity: 'text-amber-300 drop-shadow-[0_0_8px_rgba(245,158,11,0.6)]',
+  default: 'text-white',
+};
+
+// --- Bento Grid ---
+/** Bento grid container */
+export const BENTO_GRID = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 auto-rows-fr';
+
+// --- Scroll Reveal ---
+/** Applied to elements that should fade up on scroll (JS adds .is-visible) */
+export const SCROLL_REVEAL = 'scroll-reveal';
+
+// ---------------------------------------------------------------------------
 // TAILWIND CONFIG EXTENSION
 // Add these to tailwind.config.ts → theme.extend
 // ---------------------------------------------------------------------------
